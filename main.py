@@ -52,6 +52,7 @@ def printDay(intro, results, elapsed):
 
 def runTests(day):
 	test_paths = os.listdir(f"data/day{day:02d}/tests")
+	test_paths.remove(".gitkeep")
 	for test_path in test_paths:
 		printDay(f"Test {test_path}:", *runDay(day, f"data/day{day:02d}/tests/"+test_path))
 		print()
