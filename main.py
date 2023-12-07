@@ -3,7 +3,11 @@ import traceback
 import importlib
 import argparse
 import time
-from aocd import get_data, submit
+try:
+	from aocd import get_data, submit
+except ModuleNotFoundError:
+	print("ERROR: aocd library not installed, install using `pip install advent-of-code-data`")
+	exit(1)
 
 days = [None]+[importlib.import_module(f"src.day{i:02d}") for i in range(1,26)]
 
