@@ -4,7 +4,7 @@ import importlib
 import argparse
 import time
 try:
-	from aocd import get_data, submit
+	from aocd import get_data, submit, exceptions
 except ModuleNotFoundError:
 	print("ERROR: aocd library not installed, install using `pip install advent-of-code-data`")
 	exit(1)
@@ -26,7 +26,10 @@ def runDay(day, path=None):
 	path = path or f"data/day{day:02d}/input"
 	with open(path,'r+') as f:
 		if f.read() == "":
-			f.write(get_data(day=day, year = 2023))
+			try:
+				f.write(get_data(day=day, year = 2023))
+			except exceptions.AocdError:
+				print("Unable to read input from Aocd library, see above error for solution")
 	with open(path,'r') as f:
 		inp = f.read().strip()
 		start_time = time.time()
@@ -37,11 +40,14 @@ def runDay(day, path=None):
 				traceback.print_exc()
 			results = (str(e),None)
 		elapsed = time.time() - start_time
-		if args.submit and results and path.endswith("input"):
-			if results[0]:
-				submit(results[0],part='a',day=day, year=2023)
-			if results[1]:
-				submit(results[1],part='b',day=day, year=2023)
+		try:
+			if args.submit and results and path.endswith("input"):
+				if results[0]:
+					submit(results[0],part='a',day=day, year=2023)
+				if results[1]:
+					submit(results[1],part='b',day=day, year=2023)
+		except exceptions.AocdError:
+			print("See above error to fix Aocd issue")
 		return results, elapsed*1000
 
 def printDay(intro, results, elapsed):
